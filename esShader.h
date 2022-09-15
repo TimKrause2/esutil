@@ -43,11 +43,14 @@
 //
 #include <stdlib.h>
 
-#ifdef __APPLE__
-#include <OpenGLES/ES3/gl.h>
-#else
-#include <GLES3/gl3.h>
-#endif
+//#ifdef __APPLE__
+//#include <OpenGLES/ES3/gl.h>
+//#else
+//#include <GLES3/gl3.h>
+//#endif'
+
+#include <GL/glew.h>
+
 #ifdef __cplusplus
 
 extern "C" {

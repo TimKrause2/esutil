@@ -1,4 +1,4 @@
-#include <GLES3/gl31.h>
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 
 #define X_LOC 0
@@ -6,12 +6,13 @@
 
 class LGraph
 {
-    GLuint programObject;
+    static int    ref_count;
+    static GLuint programObject;
+    static GLint  colorLocation;
+    static GLint  projectionLocation;
     GLuint xVBO;
     GLuint yVBO;
     GLuint VAO;
-    GLint  colorLocation;
-    GLint  projectionLocation;
     int Nvertices;
     glm::vec4 color0;
     glm::vec4 color1;
@@ -19,6 +20,10 @@ class LGraph
     float lineWidth1;
     float ytop;
     float ybottom;
+
+    void ProgramLoad(void);
+    void ProgramDestroy(void);
+
 public:
     LGraph(int Nvertices);
     ~LGraph(void);

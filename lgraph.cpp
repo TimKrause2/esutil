@@ -5,6 +5,58 @@
 #include <string.h>
 #include <stdio.h>
 
+int    LGraph::ref_count = 0;
+GLuint LGraph::programObject;
+GLint  LGraph::colorLocation;
+GLint  LGraph::projectionLocation;
+
+void LGraph::ProgramLoad(void)
+{
+    if(!ref_count){
+        const char *vertShaderSrc =
+                "#version 300 es\n"
+                "precision highp float;\n"
+                "layout(location=0) in float a_x;\n"
+                "layout(location=1) in float a_y;\n"
+                "uniform mat4 projection;\n"
+                "void main()\n"
+                "{\n"
+                "   gl_Position = projection*vec4(a_x,a_y,0.0,1.0);\n"
+                "}\n";
+
+        const char *fragShaderSrc =
+                "#version 300 es\n"
+                "precision mediump float;\n"
+                "layout(location = 0) out vec4 f_color;\n"
+                "uniform vec4 color;\n"
+                "void main()\n"
+                "{\n"
+                "   f_color = color;\n"
+                "}\n";
+
+        programObject = esLoadProgram(vertShaderSrc, fragShaderSrc);
+        if(!programObject){
+            printf("lgraph.cpp: Error, couldn't load program.\n");
+            return;
+        }
+
+        colorLocation = glGetUniformLocation(programObject, "color");
+        projectionLocation = glGetUniformLocation(programObject, "projection");
+
+    }
+    ref_count++;
+}
+
+void LGraph::ProgramDestroy(void)
+{
+    if(ref_count){
+        ref_count--;
+        if(ref_count==0){
+            glDeleteProgram(programObject);
+        }
+    }
+}
+
 LGraph::LGraph(int Nvertices)
     :Nvertices(Nvertices),
     lineWidth0(1.0),
@@ -12,36 +64,7 @@ LGraph::LGraph(int Nvertices)
     ytop(1.0),
     ybottom(-1.0)
 {
-    const char *vertShaderSrc =
-            "#version 300 es\n"
-            "precision highp float;\n"
-            "layout(location=0) in float a_x;\n"
-            "layout(location=1) in float a_y;\n"
-            "uniform mat4 projection;\n"
-            "void main()\n"
-            "{\n"
-            "   gl_Position = projection*vec4(a_x,a_y,0.0,1.0);\n"
-            "}\n";
-
-    const char *fragShaderSrc =
-            "#version 300 es\n"
-            "precision mediump float;\n"
-            "layout(location = 0) out vec4 f_color;\n"
-            "uniform vec4 color;\n"
-            "void main()\n"
-            "{\n"
-            "   f_color = color;\n"
-            "}\n";
-
-    programObject = esLoadProgram(vertShaderSrc, fragShaderSrc);
-    if(!programObject){
-        printf("lgraph.cpp: Error, couldn't load program.\n");
-        Nvertices=-1;
-        return;
-    }
-
-    colorLocation = glGetUniformLocation(programObject, "color");
-    projectionLocation = glGetUniformLocation(programObject, "projection");
+    ProgramLoad();
 
     glGenBuffers(1, &xVBO);
     glGenBuffers(1, &yVBO);
@@ -62,7 +85,7 @@ LGraph::LGraph(int Nvertices)
 
     glBindBuffer(GL_ARRAY_BUFFER, yVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*Nvertices,
-                 NULL, GL_DYNAMIC_DRAW);
+                 NULL, GL_STREAM_DRAW);
 
     glGenVertexArrays(1, &VAO);
 
@@ -82,9 +105,8 @@ LGraph::LGraph(int Nvertices)
 
 LGraph::~LGraph(void)
 {
-    if(Nvertices<0)return;
+    ProgramDestroy();
 
-    glDeleteProgram(programObject);
     glDeleteBuffers(1, &xVBO);
     glDeleteBuffers(1, &yVBO);
     glDeleteVertexArrays(1, &VAO);
@@ -109,7 +131,7 @@ void LGraph::SetLimits(float ytop, float ybottom)
 
 void LGraph::Draw(float *y0)
 {
-    if(Nvertices<0)return;
+    if(ref_count==0)return;
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
