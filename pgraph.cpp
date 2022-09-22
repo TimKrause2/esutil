@@ -29,7 +29,7 @@ PGraph::PGraph(int Npoints_max, float pointSize)
 
     const char *fragShaderSrc =
             "#version 300 es\n"
-            "precision highp float;\n"
+            "precision mediump float;\n"
             "in vec4 pointColor;\n"
             "uniform sampler2D pointTexture;\n"
             "layout(location=0) out vec4 fragColor;\n"
@@ -69,8 +69,8 @@ PGraph::PGraph(int Npoints_max, float pointSize)
 
     glBindVertexArray(0);
 
-    pointSize = ceil(pointSize);
-    int textureSize = (int)pointSize;
+    PGraph::pointSize = ceil(pointSize);
+    int textureSize = (int)PGraph::pointSize;
 
     unsigned char *image = new unsigned char[textureSize*textureSize];
     unsigned char *pixel = image;
@@ -101,12 +101,14 @@ PGraph::PGraph(int Npoints_max, float pointSize)
     glBindTexture(GL_TEXTURE_2D, pointTexture);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_R8, textureSize, textureSize);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, textureSize, textureSize,
-                    GL_R, GL_UNSIGNED_BYTE, image);
+                    GL_RED, GL_UNSIGNED_BYTE, image);
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+    glEnable(GL_POINT_SPRITE);
 }
 
 void PGraph::SetColors(glm::vec4 *srcColors, int Npoints)
