@@ -85,10 +85,7 @@ PGraph::PGraph(int Npoints_max, float pointSize)
             dx-=1.0;
             float r=sqrt(dx*dx + dy*dy);
             if(r<=1.0){
-                *pixel = 255;
-            }else if(r<=(1.0+pixelsize)){
-                float a = 1.0 - (r-1.0)/pixelsize;
-                *pixel = a*255;
+                *pixel = (unsigned char)((1.0-r)*255);
             }else{
                 *pixel = 0;
             }
@@ -107,8 +104,6 @@ PGraph::PGraph(int Npoints_max, float pointSize)
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 
-    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-    glEnable(GL_POINT_SPRITE);
 }
 
 void PGraph::SetColors(glm::vec4 *srcColors, int Npoints)
@@ -181,10 +176,14 @@ void PGraph::Draw(glm::vec2 *srcPoints, int Npoints)
     glBindTexture(GL_TEXTURE_2D, pointTexture);
     glUniform1i(pointTextureLocation, 0);
 
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+    glEnable(GL_POINT_SPRITE);
     glBindVertexArray(VAO);
 
     glDrawArrays(GL_POINTS, 0, Npoints);
 
     glBindVertexArray(0);
     glUseProgram(0);
+    glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
+    glDisable(GL_POINT_SPRITE);
 }
