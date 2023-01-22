@@ -102,8 +102,8 @@ void FreeTypeFontDynamic::InitQuad(void)
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(attributes),
                  attributes, GL_STATIC_DRAW);
-    glVertexAttribPointer(VERTEX_LOC, 2, GL_FLOAT, GL_FALSE, sizeof(Attributes), NULL);
-    glVertexAttribPointer(TEXEL_LOC, 2, GL_FLOAT, GL_FALSE, sizeof(Attributes), (void*)sizeof(glm::vec2));
+    glVertexAttribPointer(VERTEX_LOC, 2, GL_FLOAT, GL_FALSE, sizeof(Attributes), (void*)offsetof(Attributes,vertex));
+    glVertexAttribPointer(TEXEL_LOC, 2, GL_FLOAT, GL_FALSE, sizeof(Attributes), (void*)offsetof(Attributes,texel));
     glEnableVertexAttribArray(VERTEX_LOC);
     glEnableVertexAttribArray(TEXEL_LOC);
 

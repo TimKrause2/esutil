@@ -5,6 +5,7 @@
 #include FT_STROKER_H
 #include <stdarg.h>
 #include <string.h>
+#include <cstddef>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
@@ -80,8 +81,8 @@ void FreeTypeFont::InitQuad(void)
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(attributes),
                  attributes, GL_STATIC_DRAW);
-    glVertexAttribPointer(VERTEX_LOC, 2, GL_FLOAT, GL_FALSE, sizeof(Attributes), NULL);
-    glVertexAttribPointer(TEXEL_LOC, 2, GL_FLOAT, GL_FALSE, sizeof(Attributes), (void*)sizeof(glm::vec2));
+    glVertexAttribPointer(VERTEX_LOC, 2, GL_FLOAT, GL_FALSE, sizeof(Attributes), (void*)offsetof(Attributes,vertex));
+    glVertexAttribPointer(TEXEL_LOC, 2, GL_FLOAT, GL_FALSE, sizeof(Attributes), (void*)offsetof(Attributes,texel));
     glEnableVertexAttribArray(VERTEX_LOC);
     glEnableVertexAttribArray(TEXEL_LOC);
 
