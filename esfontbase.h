@@ -1,6 +1,8 @@
 #ifndef ESFONTTYPES_H
 #define ESFONTTYPES_H
 
+#include <vector>
+
 #ifdef _MSC_VER
 #define MIN __min
 #define MAX __max
