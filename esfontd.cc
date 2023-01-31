@@ -1,4 +1,4 @@
-#include "esfontd.h"
+﻿#include "esfontd.h"
 #include "esShader.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -72,7 +72,7 @@ void FreeTypeFontDynamic::InitQuad(void)
             "   if(alpha.g==0.0) discard;\n"
             "   float baseAlpha = baseColor.a*alpha.r;\n"
             "   float outlAlpha = outlColor.a*alpha.g;\n"
-            "   outColor = vec4(outlColor.rgb*(1.0-baseAlpha) +\n"
+            "   outColor = vec4(outlColor.rgb*(1.0-baseAlpha)*outlAlpha +\n"
             "                   baseColor.rgb*baseAlpha,\n"
             "                   max(baseAlpha, outlAlpha));\n"
             "}\n";
