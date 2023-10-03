@@ -30,5 +30,6 @@ public:
     void SetColors(glm::vec4 &color0, glm::vec4 &color1);
     void SetLineWidths(float lineWidth0, float lineWidth1);
     void SetLimits(float ytop, float ybottom);
+    void SetX(float *x);
     void Draw(float *y);
 };

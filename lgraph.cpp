@@ -129,6 +129,22 @@ void LGraph::SetLimits(float ytop, float ybottom)
     LGraph::ybottom = ybottom;
 }
 
+void LGraph::SetX(float *x)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, xVBO);
+
+    float *xVBOmap = (float*)glMapBufferRange(GL_ARRAY_BUFFER,
+                                              0, sizeof(float)*Nvertices,
+                                              GL_MAP_WRITE_BIT|
+                                              GL_MAP_INVALIDATE_BUFFER_BIT);
+    for(int i=0;i<Nvertices;i++){
+        xVBOmap[i] = x[i];
+    }
+
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+}
+
+
 void LGraph::Draw(float *y0)
 {
     if(ref_count==0)return;
