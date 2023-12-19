@@ -36,7 +36,7 @@ void TexturedQuad::InitQuad(void)
 
     const char *fShaderSrc =
         "#version 300 es\n"
-        "precision mediump float;\n"
+        "precision highp float;\n"
         "in vec2 tex;\n"
         "layout(location =0) out vec4 outColor;\n"
         "uniform sampler2D s_texture;\n"
