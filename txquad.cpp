@@ -100,6 +100,7 @@ void TexturedQuad::DeleteQuad(void)
 
 void TexturedQuad::LoadTexture(char *data)
 {
+    if(!quad_initialized)return;
     glBindTexture( GL_TEXTURE_2D, texture);
     glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, width, height,
                     GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -110,6 +111,7 @@ void TexturedQuad::RenderQuad(glm::mat4 &Mprojection,
                               glm::mat4 &Mmodel,
                               glm::vec3 &scale)
 {
+    if(!quad_initialized)return;
     glUseProgram(program);
     glBindVertexArray(vao);
     glUniform1i(s_texture_loc, 0);
